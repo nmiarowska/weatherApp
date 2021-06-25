@@ -2,57 +2,42 @@
   <div class="container mt-5 mx-auto w-90" id="content">
     <div class="row mx-auto">
       <div class="col bg-light rounded p-5" >
-        
-        <!--
-        <form>
-          <div class="form-row mt-3">
-            <div class="form-group col-md-6">
-              <input type="text" class="form-control border-0" id="inputCity" placeholder="Search more places"> 
-            </div>
-            <div class="form-group col-md-4">
-              <select id="inputState" class="form-control border-0 bg-transparent font-weight-bold">
-                <option selected disabled hidden>All places</option>
-              </select>
-            </div>
-          </div>
-        </form>
-          -->
           <h1 class="my-2"><small>Weather <strong>Forecast</strong></small></h1>
-          <h3 class="my-2 font-italic"><small>Friday, 25 June 2021</small></h3>
+          <h3 class="my-2 font-italic"><small>Check weather below</small></h3>
           <div class="row mt-5 mx-auto">
             <table class="table">
               <thead class="contrast-text">
                 <tr class="d-flex">
-                  <th class="col-4">Place</th>
+                  <th class="col-2">Place</th>
+                  <th class="col-2">Weather</th>
                   <th class="col-3">Temperature</th>
                   <th class="col-3">Humidity</th>
                   <th class="col-2">Details</th>
                 </tr>
               </thead>
               <tbody>
-                <tr class="d-flex">
-                  <td class="col-4">Berlin</td>
-                  <td class="col-3">23°C</td>
-                  <td class="col-3">79%</td>
+                <tr class="d-flex" v-for="f in forecast" :key="f">
+                  <td class="col-2">{{f.name}}</td>
+                  <td class="col-2">{{f.weather[0].description}}</td>
+                  <td class="col-3">{{f.main.temp}}°C</td>
+                  <td class="col-3">{{f.main.humidity}}%</td>
                   <td class="col-2"><a href="#" class="btn btn-primary contrast-text border-0">Check</a></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-4">Paris</td>
-                  <td class="col-3">Thornton</td>
-                  <td class="col-3">@fat</td>
-                  <td class="col-2"><a href="#" class="btn btn-primary contrast-text border-0">Check</a></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-4">Larry</td>
-                  <td class="col-3">the Bird</td>
-                  <td class="col-3">@twitter</td>
-                  <td class="col-2"><a href="#" class="btn btn-primary contrast-text border-0">Check</a></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-12 d-flex justify-content-center"><a href="#" class="btn btn-primary contrast-text border-0 font-weight-bold">Add new place</a></td>
                 </tr>
               </tbody>
-            </table>
+              </table>
+              
+              <div class="card bg-transparent border-0 mt-5">
+                <div class="row">
+                  <input 
+                    type="text"  
+                    placeholder="City's name"
+                    v-model="new_city"
+                    class="ml-3"
+                  />
+                <a @click="getWeather" class="btn btn-primary contrast-text text-white border-0 ml-3 font-weight-bold">Add new place</a>
+                </div>
+                <small>{{input_messsage}}</small>
+              </div>
           </div>
       </div>
     </div>
@@ -60,20 +45,46 @@
 </template>
 
 <script>
+//import cities from '../assets/city_list.json';
+
 export default {
+  
   name: "Home",
   components: {
 
   },
   data(){
     return{
+      //city_list: cities,
+      input_messsage: '',
+      weather: {},
+      api_key: '33b5ba68e4c4ecabdb4713be5f706a37',
+      url_base: 'https://api.openweathermap.org/data/2.5/weather?q=',
+      new_city: '',
+      forecast: [],
     }
   },
+  methods: {
+    getWeather () {
+        fetch(`${this.url_base}${this.new_city}&units=metric&APPID=${this.api_key}`)
+          .then(res => {
+            return res.json();
+          })
+          .then(this.addNewForecast)
+          .catch(this.input_messsage = 'Wrong input');
+    },
+    addNewForecast (fetched) {
+      this.weather = fetched;
+      this.forecast.push(this.weather);
+      this.new_city = '';
+    },
 
-  
-};
+  },
+}
+
 
 </script>
+
 
 <style scoped>
 #content{
