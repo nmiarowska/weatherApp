@@ -31,7 +31,7 @@
               </thead>
               <tbody>
                 <tr class="d-flex">
-                  <td class="col-4">{{forecast.name}}</td>
+                  <td class="col-4">Berlin</td>
                   <td class="col-3">23°C</td>
                   <td class="col-3">79%</td>
                   <td class="col-2"><a href="#" class="btn btn-primary contrast-text border-0">Check</a></td>
